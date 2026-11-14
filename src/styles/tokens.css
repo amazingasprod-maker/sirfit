@@ -1,0 +1,131 @@
+/* Jetons de style. Thème sombre par défaut (salle, téléphone tenu en main entre
+   deux séries), thème clair au choix dans les réglages. Chaque paire texte / fond
+   a été vérifiée à 4,5:1 au moins. */
+
+:root,
+:root[data-theme='sombre'] {
+  color-scheme: dark;
+
+  --bg: #0c0d0f;
+  --surface: #16181c;
+  --raised: #1e2126;
+  --field: #23272d;
+  --field-hi: #2c3138;
+
+  --ink: #f1f3f5;
+  --ink-2: #aab2bd;
+  --muted: #8b93a0;
+
+  --line: rgba(255, 255, 255, 0.09);
+  --line-strong: rgba(255, 255, 255, 0.17);
+
+  --accent: #2a72d8;
+  --accent-press: #2466c4;
+  --accent-ink: #ffffff;
+  --accent-text: #5ea5ff;
+  --accent-soft: rgba(61, 139, 242, 0.15);
+
+  /* colonnes du graphique : la semaine choisie en clair, les autres en retrait (3:1 au moins sur la carte) */
+  --bar: #4f9bff;
+  --bar-dim: #3565a3;
+  --seg-on: #3a414b;
+
+  --done: #34b85c;
+  --done-ink: #06250f;
+  --done-bg: rgba(52, 184, 92, 0.17);
+
+  --warm: #f2a43a;
+  --drop: #b59bff;
+  --fail: #ff7272;
+  --danger: #ff7272;
+  --danger-ink: #2a0606;
+  --danger-soft: rgba(255, 114, 114, 0.13);
+  --warn-soft: rgba(242, 164, 58, 0.14);
+
+  /* pictogrammes : pastille claire dans les deux thèmes, un peu atténuée ici
+     (corps 10:1, bleu 3,9:1, charges 4,7:1 sur le fond) */
+  --vis-fond: #dfe4ea;
+  --vis-corps: #2b313a;
+  --vis-cible: #1f6fdc;
+  --vis-charge: #59636f;
+  --vis-decor: #bcc4ce;
+  --vis-agres: #8c96a3;
+  --vis-fantome: #c4cbd4;
+
+  --overlay: rgba(0, 0, 0, 0.62);
+  --shadow-up: 0 -8px 28px rgba(0, 0, 0, 0.45);
+  --shadow-float: 0 6px 22px rgba(0, 0, 0, 0.5);
+}
+
+:root[data-theme='clair'] {
+  color-scheme: light;
+
+  --bg: #f2f3f5;
+  --surface: #ffffff;
+  --raised: #ffffff;
+  --field: #eceef2;
+  --field-hi: #dfe3e9;
+
+  --ink: #14171c;
+  --ink-2: #4a525d;
+  --muted: #616a76;
+
+  --line: rgba(20, 23, 28, 0.1);
+  --line-strong: rgba(20, 23, 28, 0.2);
+
+  --accent: #1f6fdc;
+  --accent-press: #1a61c4;
+  --accent-ink: #ffffff;
+  --accent-text: #1a61c4;
+  --accent-soft: rgba(31, 111, 220, 0.1);
+
+  --bar: #1757b8;
+  --bar-dim: #5b8fdc;
+  --seg-on: #ffffff;
+
+  --done: #2a9a48;
+  --done-ink: #ffffff;
+  --done-bg: #d8f3d0;
+
+  --warm: #9a5a00;
+  --drop: #6a45d1;
+  --fail: #c92f2f;
+  --danger: #c92f2f;
+  --danger-ink: #ffffff;
+  --danger-soft: rgba(201, 47, 47, 0.09);
+  --warn-soft: rgba(154, 90, 0, 0.1);
+
+  --vis-fond: #eaeef2;
+  --vis-corps: #2b313a;
+  --vis-cible: #1f6fdc;
+  --vis-charge: #59636f;
+  --vis-decor: #c5ccd5;
+  --vis-agres: #929ca8;
+  --vis-fantome: #cdd3db;
+
+  --overlay: rgba(20, 23, 28, 0.45);
+  --shadow-up: 0 -8px 28px rgba(20, 23, 28, 0.16);
+  --shadow-float: 0 6px 22px rgba(20, 23, 28, 0.18);
+}
+
+:root {
+  /* échelle fixe, pas de typographie fluide : c'est un outil, pas une vitrine */
+  --t-xs: 0.75rem;
+  --t-sm: 0.8125rem;
+  --t-base: 0.9375rem;
+  --t-md: 1.0625rem;
+  --t-lg: 1.25rem;
+  --t-xl: 1.5rem;
+
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+
+  --gutter: 16px;
+  --tabbar-h: 58px;
+  --topbar-h: 52px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}

@@ -1,0 +1,12 @@
+node_modules/
+dist/
+dev-dist/
+.wrangler/
+*.local
+.env
+captures/
+livrables/
+
+# notes internes : restent sur le PC, jamais publiées
+CLAUDE.md
+passation.md

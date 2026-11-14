@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="fr" data-theme="sombre">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
+    <meta name="theme-color" content="#0c0d0f" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="description" content="Carnet d'entraînement personnel : routines, séances, progression." />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Sir Fit" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <title>Sir Fit</title>
+    <script>
+      // thème appliqué avant le premier rendu, pour ne pas voir passer le mauvais
+      (function () {
+        try {
+          var choix = localStorage.getItem('sir-fit:theme') || 'sombre';
+          var clair = choix === 'clair' || (choix === 'systeme' && matchMedia('(prefers-color-scheme: light)').matches);
+          document.documentElement.dataset.theme = clair ? 'clair' : 'sombre';
+          if (clair) document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f2f3f5');
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="racine"></div>
+    <noscript>Sir Fit a besoin de JavaScript pour fonctionner.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
