@@ -109,6 +109,27 @@ export function RoutineEditor() {
 
       <BlocsEditor mode="routine" blocs={r.exercises} onChange={(exercises) => changer({ exercises })} catalogue={catalogue} reposDefautS={settings.reposDefautS} />
 
+      {r.finitions && r.finitions.length > 0 && (
+        <section className="finitions" aria-label="Finitions au choix">
+          <p className="finitions__titre">Finitions au choix</p>
+          <p className="finitions__aide">Proposées en fin de séance, une série à l'échec chacune.</p>
+          <div className="finitions__choix">
+            {r.finitions.map((fid) => (
+              <button
+                key={fid}
+                type="button"
+                className="btn btn--soft btn--sm"
+                aria-label={`Retirer ${catalogue.nomDe(fid)} des finitions`}
+                onClick={() => changer({ finitions: r.finitions?.filter((x) => x !== fid) })}
+              >
+                {catalogue.nomDe(fid)}
+                <Icon name="fermer" size={16} />
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
       {!valide && modifiee && <p className="avis">Il faut un titre et au moins un exercice pour enregistrer.</p>}
 
       {!nouvelle && (

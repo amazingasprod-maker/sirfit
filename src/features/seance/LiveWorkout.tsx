@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Redirect, useLocation } from 'wouter';
+import { ajouterFinition } from '../../domain/blocs';
 import { fmtChrono, fmtKg } from '../../domain/format';
 import { seriesSeance, volumeSeance } from '../../domain/stats';
 import type { Bloc } from '../../domain/types';
@@ -136,6 +137,22 @@ export function LiveWorkout() {
         reposDefautS={settings.reposDefautS}
         onValidee={surValidee}
       />
+
+      {/* finitions de la routine : rien n'est imposé, un geste en ajoute une à la séance */}
+      {draft.finitions && draft.finitions.length > 0 && (
+        <section className="finitions" aria-label="Finitions au choix">
+          <p className="finitions__titre">Pour finir, si tu es en forme</p>
+          <p className="finitions__aide">Une série à l'échec chacune. Prends l'une, les deux, ou aucune.</p>
+          <div className="finitions__choix">
+            {draft.finitions.map((id) => (
+              <button key={id} type="button" className="btn btn--soft btn--sm" onClick={() => draftStore.update((d) => ajouterFinition(d, id))}>
+                <Icon name="plus" size={18} />
+                {catalogue.nomDe(id)} à l'échec
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
 
       <button type="button" className="btn btn--danger-discret btn--bloc" onClick={() => setAbandon(true)}>
         Abandonner la séance

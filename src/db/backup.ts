@@ -112,8 +112,9 @@ export function nomDeFichier(now: number = Date.now()): string {
 export async function toutEffacer(base: SportDB = db, now: number = Date.now()): Promise<void> {
   await base.transaction('rw', [base.exercises, base.routines, base.workouts, base.settings, base.draft], async () => {
     await Promise.all([base.exercises.clear(), base.routines.clear(), base.workouts.clear(), base.settings.clear(), base.draft.clear()]);
+    const routines = routinesDeBase(now);
     await base.exercises.bulkAdd(exercicesDeBase());
-    await base.routines.bulkAdd(routinesDeBase(now));
-    await base.settings.put({ ...SETTINGS_DEFAUT });
+    await base.routines.bulkAdd(routines);
+    await base.settings.put({ ...SETTINGS_DEFAUT, routinesProposees: routines.map((r) => r.id) });
   });
 }

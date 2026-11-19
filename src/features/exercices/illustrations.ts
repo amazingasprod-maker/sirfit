@@ -1,4 +1,5 @@
-// Fichier généré par le script d'installation des illustrations : ne pas modifier à la main.
+// Fichier généré par le script d'installation des illustrations (absent du dépôt).
+// Seule exception à la main : les exercices pectoraux et jambes du 19/11/2026, sur des dessins déjà installés.
 // Dessins : Workout Guide (Bryl Lim, en partie d'après Everkinetic), CC BY-SA 4.0,
 // voir public/illustrations/LICENCE.md. Fichiers : public/illustrations/<slug>/<1|2|3>.svg
 
@@ -23,6 +24,7 @@ export const ILLUSTRATION: Record<string, string> = {
   dcd: 'decline-bench-press',
   dci: 'incline-dumbbell-press',
   dcib: 'incline-bench-press',
+  dcim: 'incline-bench-press',
   dcm: 'machine-chest-press',
   dcs: 'close-grip-bench-press',
   dips: 'dip',
@@ -31,7 +33,9 @@ export const ILLUSTRATION: Record<string, string> = {
   dmb: 'overhead-press',
   dmm: 'machine-shoulder-press',
   ecar: 'dumbbell-fly',
+  ecari: 'dumbbell-fly',
   ecp: 'cable-fly',
+  ecpb: 'cable-fly',
   el: 'lateral-raise',
   elf: 'front-raise',
   elp: 'cable-lateral-raise',
@@ -60,6 +64,8 @@ export const ILLUSTRATION: Record<string, string> = {
   mount: 'mountain-climber',
   ois: 'rear-delt-fly',
   pec: 'pec-deck',
+  pecbas: 'dip',
+  pend: 'hack-squat',
   poig: 'wrist-curl',
   pom: 'push-up',
   pont: 'glute-bridge',
@@ -83,6 +89,7 @@ export const ILLUSTRATION: Record<string, string> = {
   sqb: 'squat',
   sqbul: 'bulgarian-split-squat',
   sqf: 'front-squat',
+  sqm: 'squat',
   sqpc: 'bodyweight-squat',
   step: 'step-up',
   tir: 'lat-pulldown',

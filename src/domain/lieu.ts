@@ -38,6 +38,7 @@ const REMPLACANTS: Record<string, string[]> = {
   // Pectoraux : sans banc, il reste les pompes
   dc: ['pom'], dcb: ['pom'], dci: ['pom'], dcib: ['pom'], dcd: ['pom'], dcm: ['pom'],
   ecar: ['pom'], pec: ['pom'], ecp: ['pom'], pull: ['pom'],
+  ecpb: ['pom'], ecari: ['pom'], dcim: ['pom'], pecbas: ['dipsb', 'pom'],
   // Dos
   rowt: ['rowb', 'row'], rowm: ['row', 'rowb'], rowp: ['row', 'rowb'],
   tir: ['row', 'rowb'], tirs: ['rowb', 'row'], trac: ['row', 'rowb'], tracs: ['rowb', 'row'],
@@ -51,7 +52,8 @@ const REMPLACANTS: Record<string, string[]> = {
   // Abdos
   roue: ['gai', 'mount'], relj: ['reljs', 'crunch'], crunchp: ['crunch', 'russ'],
   // Quadriceps
-  sqb: ['sq', 'sqf'], hack: ['sq', 'sqbul'], pre: ['sqbul', 'sq'], legext: ['sqbul', 'fen'],
+  sqb: ['sq', 'sqf'], hack: ['sq', 'sqbul', 'fens'], pre: ['sqbul', 'sq'], legext: ['sqbul', 'fen'],
+  sqm: ['sq', 'sqf', 'sqbul'], pend: ['sqf', 'sqbul', 'fen'],
   // Ischios
   lc: ['sdt', 'sdtb'], lca: ['sdtb', 'sdt'],
   // Fessiers
@@ -109,5 +111,21 @@ export function adapterAuLieu(r: Routine, lieu: Lieu, exercices: Exercise[], kin
     const k = kindDe(vers);
     exercises.push({ ...b, exerciseId: vers, sets: b.sets.map((s) => ({ ...s, kg: null, reps: repsPour(s.reps, de, k) })) });
   }
-  return { routine: { ...r, titre: `${r.titre} (maison)`, exercises }, changes };
+  const routine: Routine = { ...r, titre: `${r.titre} (maison)`, exercises };
+  if (r.finitions) routine.finitions = finitionsAuLieu(r.finitions, parId);
+  return { routine, changes };
+}
+
+/**
+ * Finitions à la maison : chacune prend son premier remplaçant faisable, même
+ * s'il est déjà dans la séance (une finition se fait en plus), jamais en double.
+ */
+function finitionsAuLieu(ids: string[], parId: Map<string, Exercise>): string[] {
+  const out: string[] = [];
+  for (const id of ids) {
+    const exo = parId.get(id);
+    const vers = !exo || faisableALaMaison(exo) ? id : (REMPLACANTS[id] ?? []).find((c) => parId.has(c));
+    if (vers && !out.includes(vers)) out.push(vers);
+  }
+  return out;
 }

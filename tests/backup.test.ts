@@ -1,6 +1,6 @@
 import 'fake-indexeddb/auto';
 import { afterEach, describe, expect, it } from 'vitest';
-import { SportDB, completerBibliotheque, lireSettings, majSettings } from '../src/db/schema';
+import { SportDB, completerBibliotheque, completerRoutines, lireSettings, majSettings } from '../src/db/schema';
 import { SauvegardeInvalide, exporter, importer, toutEffacer, valider } from '../src/db/backup';
 import { exercicesDeBase } from '../src/db/seed';
 import type { Workout } from '../src/domain/types';
@@ -41,10 +41,10 @@ const seance: Workout = {
 };
 
 describe('première ouverture', () => {
-  it('installe la bibliothèque, les deux routines et les réglages', async () => {
+  it('installe la bibliothèque, les quatre routines et les réglages', async () => {
     const base = nouvelleBase();
     expect(await base.exercises.count()).toBe(exercicesDeBase().length);
-    expect((await base.routines.orderBy('ordre').toArray()).map((r) => r.titre)).toEqual(['Haut du corps', 'Bas du corps']);
+    expect((await base.routines.orderBy('ordre').toArray()).map((r) => r.titre)).toEqual(['Haut du corps', 'Bas du corps', 'Pectoraux 30 min', 'Jambes 20 min']);
     expect((await lireSettings(base)).reposDefautS).toBe(90);
   });
 
@@ -94,7 +94,7 @@ describe('sauvegarde', () => {
 
     expect(await cible.workouts.toArray()).toEqual([seance]);
     expect(await cible.exercises.count()).toBe(exercicesDeBase().length + 1);
-    expect(await cible.routines.count()).toBe(2);
+    expect(await cible.routines.count()).toBe(4);
     expect(await lireSettings(cible)).toMatchObject({ nom: 'Test', reposDefautS: 120 });
     expect(await exporter(cible, 42)).toEqual(await exporter(source, 42));
   });
@@ -126,7 +126,38 @@ describe('sauvegarde', () => {
     await base.routines.clear();
     await toutEffacer(base);
     expect(await base.workouts.count()).toBe(0);
-    expect(await base.routines.count()).toBe(2);
+    expect(await base.routines.count()).toBe(4);
     expect(await base.exercises.count()).toBe(exercicesDeBase().length);
+    // rien à reproposer après un effacement : la routine pectoraux y est déjà
+    expect(await completerRoutines(base)).toBe(0);
+  });
+});
+
+describe('routines ajoutées après coup', () => {
+  it("une installation d'avant reçoit les routines pectoraux et jambes une fois, en fin de liste", async () => {
+    const base = nouvelleBase();
+    await base.routines.bulkDelete(['routine-pecs', 'routine-jambes']);
+    await majSettings({ routinesProposees: [] }, base);
+    expect(await completerRoutines(base)).toBe(2);
+    const routines = await base.routines.orderBy('ordre').toArray();
+    expect(routines.map((r) => r.id)).toEqual(['routine-haut', 'routine-bas', 'routine-pecs', 'routine-jambes']);
+    expect(await completerRoutines(base)).toBe(0);
+  });
+
+  it('une routine supprimée par Lamine ne revient pas', async () => {
+    const base = nouvelleBase();
+    await base.routines.count();
+    await base.routines.delete('routine-pecs');
+    expect(await completerRoutines(base)).toBe(0);
+    expect(await base.routines.get('routine-pecs')).toBeUndefined();
+  });
+
+  it("garde l'ordre choisi : ajoutée après la dernière routine existante", async () => {
+    const base = nouvelleBase();
+    await base.routines.bulkDelete(['routine-pecs', 'routine-jambes']);
+    await base.routines.update('routine-bas', { ordre: 7 });
+    await majSettings({ routinesProposees: [] }, base);
+    await completerRoutines(base);
+    expect((await base.routines.get('routine-pecs'))?.ordre).toBe(8);
   });
 });

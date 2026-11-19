@@ -178,9 +178,23 @@ export function draftDepuisRoutine(r: Routine, now: number): Draft {
     partie: r.partie,
     mode: 'libre',
     exercises: nettoyerSupersets(r.exercises.map((b) => copieBloc(b))),
+    finitions: [...(r.finitions ?? [])],
     echauffement: echauffementPour(r.partie),
     repos: null,
   };
+}
+
+/** Repos après une finition : le temps de passer à la suivante. */
+export const REPOS_FINITION = 30;
+
+/**
+ * Ajoute à la séance une finition proposée par la routine : une série à
+ * l'échec, que Lamine prend ou non en fin de séance. Elle sort de la liste.
+ */
+export function ajouterFinition(d: Draft, exerciseId: string): Draft {
+  if (!d.finitions?.includes(exerciseId)) return d;
+  const bloc = { ...nouveauBloc(exerciseId, REPOS_FINITION, 0), sets: [setVide('echec')] };
+  return { ...d, exercises: [...d.exercises, bloc], finitions: d.finitions.filter((id) => id !== exerciseId) };
 }
 
 /** Les items de la routine que l'algorithme adaptatif sait raccourcir. */
@@ -216,6 +230,7 @@ export function draftDepuisPlan(r: Routine, plan: Plan, now: number): Draft {
     partie: r.partie,
     mode: plan.mode,
     exercises: nettoyerSupersets(exercises),
+    finitions: [...(r.finitions ?? [])],
     echauffement: echauffementPour(r.partie),
     repos: null,
   };

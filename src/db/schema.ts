@@ -1,6 +1,6 @@
 import Dexie, { type Table } from 'dexie';
 import { SETTINGS_DEFAUT, type Draft, type Exercise, type Routine, type Settings, type Workout } from '../domain/types';
-import { exercicesDeBase, routinesDeBase } from './seed';
+import { ROUTINES_NOUVELLES, exercicesDeBase, routinesDeBase } from './seed';
 
 export class SportDB extends Dexie {
   exercises!: Table<Exercise, string>;
@@ -21,9 +21,10 @@ export class SportDB extends Dexie {
     // première ouverture : bibliothèque, routines de départ, réglages
     this.on('populate', (tx) => {
       const now = Date.now();
+      const routines = routinesDeBase(now);
       tx.table('exercises').bulkAdd(exercicesDeBase());
-      tx.table('routines').bulkAdd(routinesDeBase(now));
-      tx.table('settings').add({ ...SETTINGS_DEFAUT });
+      tx.table('routines').bulkAdd(routines);
+      tx.table('settings').add({ ...SETTINGS_DEFAUT, routinesProposees: routines.map((r) => r.id) });
     });
   }
 }
@@ -50,6 +51,31 @@ export async function completerBibliotheque(base: SportDB = db): Promise<number>
     });
   }
   return manquants.length;
+}
+
+/**
+ * Ajoute une fois les routines de départ apparues après coup (ROUTINES_NOUVELLES),
+ * à la fin de la liste. Le réglage `routinesProposees` les retient : une routine
+ * supprimée ensuite ne revient pas. Renvoie le nombre de routines ajoutées.
+ */
+export async function completerRoutines(base: SportDB = db, now: number = Date.now()): Promise<number> {
+  let ajoutees = 0;
+  await base.transaction('rw', base.routines, base.settings, async () => {
+    const s = await lireSettings(base);
+    const vues = new Set(s.routinesProposees);
+    const aProposer = routinesDeBase(now).filter((r) => ROUTINES_NOUVELLES.includes(r.id) && !vues.has(r.id));
+    if (!aProposer.length) return;
+    const existantes = await base.routines.toArray();
+    const ids = new Set(existantes.map((r) => r.id));
+    let ordre = Math.max(-1, ...existantes.map((r) => r.ordre)) + 1;
+    for (const r of aProposer) {
+      if (ids.has(r.id)) continue;
+      await base.routines.add({ ...r, ordre: ordre++ });
+      ajoutees++;
+    }
+    await base.settings.put({ ...s, id: 'app', routinesProposees: [...vues, ...aProposer.map((r) => r.id)] });
+  });
+  return ajoutees;
 }
 
 export async function lireSettings(base: SportDB = db): Promise<Settings> {

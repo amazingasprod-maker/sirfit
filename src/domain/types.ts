@@ -75,6 +75,8 @@ export interface Routine {
   partie: Partie | null;
   ordre: number;
   exercises: Bloc[];
+  /** exercices proposés en fin de séance, à prendre ou non (une série à l'échec chacun) */
+  finitions?: string[];
   createdAt: number;
   updatedAt: number;
 }
@@ -111,6 +113,8 @@ export interface Draft {
   partie: Partie | null;
   mode: 'libre' | 'complet' | 'express';
   exercises: Bloc[];
+  /** finitions de la routine pas encore ajoutées à la séance */
+  finitions?: string[];
   echauffement: WarmupItem[] | null;
   repos: RestState | null;
 }
@@ -128,6 +132,8 @@ export interface Settings {
   derniereSauvegarde: number | null;
   /** où se fait la séance : à la maison, les exercices impossibles sont remplacés (domain/lieu.ts) */
   lieu: 'salle' | 'maison';
+  /** routines de départ déjà proposées : une routine supprimée ne revient pas (db/schema.ts) */
+  routinesProposees: string[];
 }
 
 export const SETTINGS_DEFAUT: Settings = {
@@ -140,4 +146,5 @@ export const SETTINGS_DEFAUT: Settings = {
   theme: 'sombre',
   derniereSauvegarde: null,
   lieu: 'salle',
+  routinesProposees: [],
 };

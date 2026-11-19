@@ -1561,6 +1561,30 @@ select {
   border-bottom-color: var(--line-strong);
 }
 
+.finitions {
+  margin: 4px 0 16px;
+  padding: 12px;
+  border-radius: var(--r-md);
+  background: var(--accent-soft);
+}
+
+.finitions__titre {
+  margin: 0;
+  font-weight: 600;
+}
+
+.finitions__aide {
+  margin: 2px 0 10px;
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+}
+
+.finitions__choix {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .note-mode {
   margin: 0 0 12px;
   padding: 10px 12px;

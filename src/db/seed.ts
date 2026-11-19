@@ -43,6 +43,11 @@ const BIBLIOTHEQUE: Record<Groupe, Ligne[]> = {
     ['ecp', 'Écarté à la poulie vis-à-vis', P, 'charge', 'ecp'],
     ['pom', 'Pompes', C, 'corps', 'pom'],
     ['pull', 'Pull-over haltère', H, 'charge', 'pull'],
+    // ajoutés le 19/11/2026 pour la routine « Pectoraux 30 min »
+    ['ecpb', 'Écarté poulie basse', P, 'charge', 'ecp'],
+    ['ecari', 'Écarté incliné haltères', H, 'charge', 'ecar'],
+    ['dcim', 'Développé incliné machine', M, 'charge', 'dc'],
+    ['pecbas', 'Machine bas des pecs', M, 'charge', 'dips'],
   ],
   Dos: [
     ['row', 'Rowing haltère', H, 'charge', 'row'],
@@ -114,6 +119,9 @@ const BIBLIOTHEQUE: Record<Groupe, Ligne[]> = {
     ['pre', 'Presse à cuisses', M, 'charge', 'pre'],
     ['legext', 'Leg extension', M, 'charge', 'legext'],
     ['sqbul', 'Squat bulgare', H, 'charge', 'sqbul'],
+    // ajoutés le 19/11/2026 pour la routine « Jambes 20 min »
+    ['sqm', 'Squat machine', M, 'charge', 'sqb'],
+    ['pend', 'Pendule squat', M, 'charge', 'sqb'],
   ],
   Ischios: [
     ['lc', 'Leg curl', M, 'charge', 'lc'],
@@ -164,7 +172,84 @@ function blocsDepuis(prefixe: string, items: Item[]): Bloc[] {
   }));
 }
 
-/** Les deux programmes de Sir_Fit, devenus les routines de départ. */
+type ItemNote = [exId: string, series: number, reps: number, repos: number, note: string];
+
+/** Blocs liés en un seul super set (giant set au-delà de deux exercices). */
+function superset(prefixe: string, items: ItemNote[]): Bloc[] {
+  return items.map(([exerciseId, series, reps, reposS, note], i) => ({
+    uid: `${prefixe}-${i}`,
+    exerciseId,
+    note,
+    reposS,
+    supersetId: items.length > 1 ? prefixe : null,
+    sets: Array.from({ length: series }, () => ({ type: 'normale' as const, kg: null, reps, done: false })),
+  }));
+}
+
+/**
+ * Séance pectoraux d'Essan (vidéo « Comment exploser les pectoraux en 30
+ * minutes », demandée par Lamine le 19/11/2026). Trois parties : giant set
+ * 20/15/10, un exercice lourd, super set pour finir. Le repos est porté par
+ * chaque exercice : 30 s entre les exercices d'un tour, 3 min après le dernier.
+ * Notes de 40 caractères au plus : le champ tient sur une ligne en 390 px.
+ */
+function routinePecs(now: number, ordre: number): Routine {
+  return {
+    id: 'routine-pecs',
+    titre: 'Pectoraux 30 min',
+    note: '',
+    partie: 'haut',
+    ordre,
+    exercises: [
+      ...superset('pecs-a', [
+        ['ecpb', 2, 20, 30, 'Tension avant la 1re rep, 1 s serré'],
+        ['dcm', 2, 15, 30, 'Repos tenu : baisse plutôt la charge'],
+        ['ecari', 2, 10, 180, 'Fin du tour : 3 min, puis 2e tour'],
+      ]),
+      ...superset('pecs-b', [['dcim', 2, 10, 180, 'Lourd. Descente lente, montée vive']]),
+      ...superset('pecs-c', [
+        ['ecp', 2, 10, 30, 'Poulies prises : pec deck'],
+        ['pecbas', 2, 10, 180, '1 s en bas. Sinon : dips penché'],
+      ]),
+    ],
+    finitions: ['dips', 'pom'],
+    createdAt: now,
+    updatedAt: now,
+  };
+}
+
+/**
+ * Séance jambes d'Essan (vidéo « Séance jambes 20 min ultra efficace »,
+ * demandée par Lamine le 19/11/2026). Giant set 20/15/10 fait deux fois, puis
+ * pendule squat et hack squat, une série chacun. Mollets : au choix en fin de
+ * séance (lui les fait ce jour là ou un autre).
+ */
+function routineJambes(now: number, ordre: number): Routine {
+  return {
+    id: 'routine-jambes',
+    titre: 'Jambes 20 min',
+    note: '',
+    partie: 'bas',
+    ordre,
+    exercises: [
+      ...superset('jambes-a', [
+        ['legext', 2, 20, 30, '2e tour : ne baisse pas les charges'],
+        ['pre', 2, 15, 30, 'Amplitude complète, gainé'],
+        ['sqm', 2, 10, 180, 'Fin du tour : 3 min. Sinon : squat'],
+      ]),
+      ...superset('jambes-b', [['pend', 1, 10, 180, 'Explosif en montée. Sinon : squat']]),
+      ...superset('jambes-c', [['hack', 1, 10, 0, 'Puis 10 s de pause et 5 reps de plus']]),
+    ],
+    finitions: ['molm'],
+    createdAt: now,
+    updatedAt: now,
+  };
+}
+
+/** Routines ajoutées après la première version : proposées une fois aux installations existantes. */
+export const ROUTINES_NOUVELLES = ['routine-pecs', 'routine-jambes'];
+
+/** Les deux programmes de Sir_Fit, devenus les routines de départ, puis les séances pectoraux et jambes. */
 export function routinesDeBase(now: number): Routine[] {
   return [
     {
@@ -201,5 +286,7 @@ export function routinesDeBase(now: number): Routine[] {
       createdAt: now,
       updatedAt: now,
     },
+    routinePecs(now, 2),
+    routineJambes(now, 3),
   ];
 }

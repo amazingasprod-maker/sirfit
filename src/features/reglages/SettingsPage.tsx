@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { SauvegardeInvalide, exporter, importer, nomDeFichier, toutEffacer, valider, type Sauvegarde } from '../../db/backup';
-import { completerBibliotheque, majSettings } from '../../db/schema';
+import { completerBibliotheque, completerRoutines, majSettings } from '../../db/schema';
 import { fmtDate, fmtHeure, fmtRepos, pluriel } from '../../domain/format';
 import type { Settings, ThemeChoice } from '../../domain/types';
 import { useRoutines, useSettings, useWorkouts } from '../../state/data';
@@ -267,6 +267,7 @@ export function SettingsPage() {
           try {
             await importer(aImporter);
             await completerBibliotheque();
+            await completerRoutines();
             await draftStore.charger();
             toast('Sauvegarde importée');
           } catch (e) {

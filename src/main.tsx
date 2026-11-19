@@ -2,7 +2,7 @@ import { createRoot } from 'react-dom/client';
 import { registerSW } from 'virtual:pwa-register';
 import { Router } from 'wouter';
 import { App } from './App';
-import { completerBibliotheque } from './db/schema';
+import { completerBibliotheque, completerRoutines } from './db/schema';
 import { draftStore } from './state/draft';
 import './styles/tokens.css';
 import './styles/app.css';
@@ -19,7 +19,9 @@ const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
 if (location.pathname === `${BASE}/` || location.pathname === BASE) history.replaceState(null, '', `${BASE}/seance`);
 
 void draftStore.charger();
-void completerBibliotheque().catch((e) => console.error('Bibliothèque non complétée', e));
+void completerBibliotheque()
+  .then(() => completerRoutines())
+  .catch((e) => console.error('Bibliothèque non complétée', e));
 
 // Demande au navigateur de ne pas vider les données quand le téléphone manque de place.
 // Sans effet visible : accordé d'office à une app installée, sinon simplement refusé.
